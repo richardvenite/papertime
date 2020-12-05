@@ -1,0 +1,34 @@
+version: "3.0"
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx_conf/papertime:/etc/nginx/conf.d
+      - ./:/var/www/html
+    networks:
+      micro_servicos:
+        ipv4_address: 10.11.0.11
+
+  php:
+    build: ./
+    container_name: php
+    command: bash -c "php-fpm --allow-to-run-as-root"
+    restart: always
+    volumes:
+      - ./:/var/www/html
+    networks:
+      micro_servicos:
+        ipv4_address: 10.11.0.12
+
+networks:
+  micro_servicos:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.11.0.0/24
+         gateway: 10.11.0.1
